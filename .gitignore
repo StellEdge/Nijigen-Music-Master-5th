@@ -1,0 +1,34 @@
+# Local dependencies and generated output
+node_modules/
+/dist/
+/android/build/
+/android/signing/
+/output/
+/preview-*.png
+*.apk
+*.idsig
+*.jks
+*.keystore
+*.pem
+*.key
+*.log
+__pycache__/
+*.py[cod]
+.env
+.env.*
+!.env.example
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+
+# Windows build artifacts and downloaded package archives
+/windows/build/
+/windows/bin/
+/windows/obj/
+/windows/vendor/*.nupkg
+
+# Historical screenshots may contain external song-pack artwork.
+/docs/screenshots/preview-*.png
+!/docs/screenshots/preview-desktop.png
+!/docs/screenshots/preview-mobile.png

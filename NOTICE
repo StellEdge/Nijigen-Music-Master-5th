@@ -1,0 +1,10 @@
+KarutaPlayer
+Copyright 2026 StellEdge and contributors
+
+Code is licensed under the Apache License, Version 2.0.
+All assets in assets/ are copyright 2026 StellEdge and licensed under
+Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International
+(SPDX: CC-BY-NC-SA-4.0). See assets/LICENSE.md and ASSETS.md.
+License: https://creativecommons.org/licenses/by-nc-sa/4.0/
+The player was rewritten with reference to the Nijigen Music Master song-pack format.
+No original Unity project or NAudio source is distributed in this repository.

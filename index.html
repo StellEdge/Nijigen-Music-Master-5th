@@ -1,0 +1,58 @@
+<!doctype html>
+<html lang="zh-CN">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="theme-color" content="#e9f3fa"><title>歌牌播放器</title><link rel="stylesheet" href="style.css"></head>
+<body class="app-loading" aria-busy="true">
+<div id="splash" class="splash" role="status" aria-live="polite" aria-label="应用加载中">
+  <img class="splash-logo" src="assets/nijigen-5th-anniversary.png" alt="NIJIGEN MUSIC MASTER 五周年" width="2048" height="768">
+  <span class="splash-spinner" aria-hidden="true"></span><span class="splash-label">加载中…</span>
+</div>
+<div class="ambient" aria-hidden="true"><i></i><i></i><i></i><i></i></div>
+<canvas id="spectrum" class="spectrum" aria-hidden="true"></canvas>
+<div id="logoBubble" class="logo-bubble" role="status" aria-live="polite" hidden></div>
+<header><a class="brand" href="#" aria-label="歌牌播放器 · 5周年 · BY 星刃"><img src="assets/nijigen-5th-anniversary.png" alt="NIJIGEN MUSIC MASTER · 5TH ANNIVERSARY · BY 星刃" width="2048" height="768"></a><div class="header-actions"><button id="importButton" aria-expanded="false" aria-controls="importPanel">加载曲包</button><button id="playlistButton" aria-expanded="false" aria-controls="playlistPanel">播放列表</button><button id="settingsButton" aria-expanded="false" aria-controls="settingsPanel">读牌设置</button></div></header>
+<main>
+  <aside id="importPanel" class="menu-panel panel" aria-label="加载曲包" role="dialog" hidden>
+    <div class="section-head"><h2>加载曲包</h2><button id="closeImport" aria-label="关闭曲包菜单">×</button></div>
+    <div id="dropzone" tabindex="0" role="button" aria-label="选择或拖入 ZIP 曲包"><div class="import-actions"><button id="zipButton">选择 ZIP 曲包</button></div><small>或拖入 ZIP 曲包，仅支持 ZIP 格式</small></div>
+    <input id="zipInput" type="file" accept=".zip" multiple hidden>
+    <div class="encoding"><label for="encoding">编码</label><select id="encoding"><option value="auto">自动</option><option value="utf-8">UTF-8</option><option value="gb18030">GB18030 / GBK</option></select></div>
+    <div id="packs" class="packs"></div>
+    <details id="diagnostics"><summary>导入诊断 <span id="issueCount">0</span></summary><pre id="issues">暂无问题</pre></details>
+  </aside>
+  <aside class="library menu-panel panel" id="playlistPanel" aria-label="播放列表" role="dialog" hidden>
+    <div class="section-head"><h2>播放列表 <span id="total">0 首</span></h2><button id="closePlaylist" aria-label="关闭播放列表">×</button></div>
+    <label class="search"><input id="search" placeholder="搜索" aria-label="搜索歌曲"></label>
+    <details class="playlist-pack-picker" open><summary>按歌包选择</summary><div id="playlistPacks" class="playlist-packs" aria-label="按歌包选择曲目"></div></details>
+    <div class="section-head"><button id="selectAll" class="text-button">全选 / 取消</button></div>
+    <div id="songs" class="songs"></div>
+    <div class="library-footer" id="packSummary"></div>
+  </aside>
+  <section class="stage panel">
+    <div class="section-head"><span></span><span id="state" role="status">等待歌包</span></div>
+    <div class="card-area"><div id="card" class="card"><div id="cardPlaceholder" class="card-back"><img src="assets/cardback.png" alt="五周年默认卡背"><span id="placeholderText"></span></div><img id="cover" alt="当前歌牌" hidden></div></div>
+    <div class="song-info"><p id="anime"></p><h1 id="title"></h1><p id="artist"></p><p id="subtitle"></p></div>
+    <section class="game-panel" id="gamePanel" aria-label="游戏控制"><div class="mode-controls">
+      <button id="newRound" class="new-round">开一局</button><button id="warmup" class="warmup">播放热场音乐</button><button id="shuffleShortcut" aria-pressed="true" title="下一局的顺序">随机</button>
+      <button id="autoShortcut" aria-pressed="true" title="游戏中自动切牌">全自动</button><button id="limitShortcut" aria-pressed="false">TVSize</button><button id="reveal" aria-pressed="false">揭晓</button>
+    </div></section>
+    <div class="playback-dock" aria-label="播放控制">
+      <div class="timeline"><input id="seek" aria-label="音频进度" type="range" min="0" max="1" step="0.01" value="0" disabled><div><span id="elapsed">00:00</span><span id="roundProgress"></span><span id="duration">00:00</span></div></div>
+      <div class="transport"><button id="previous" aria-label="上一首" title="上一首">⏮</button><button id="play" class="primary" aria-label="播放" title="播放">▶</button><button id="next" aria-label="下一首" title="下一首">⏭</button></div>
+      <div class="dock-volume"><label><input aria-label="音量" id="volume" type="range" min="0" max="1" step="0.01" value="0.8"></label></div>
+    </div>
+    <p id="notice" role="status" aria-live="polite" hidden></p>
+  </section>
+  <aside class="settings menu-panel panel" id="settingsPanel" role="dialog" aria-label="读牌设置" hidden>
+    <div class="section-head"><h2>读牌设置</h2><button id="closeSettings" aria-label="关闭设置">×</button></div>
+    <label class="switch"><span>整轮结束后循环</span><input id="loop" type="checkbox"></label>
+    <div class="two-fields"><label class="field">片段长度 / 秒<input id="length" type="number" min="0" max="3600" value="30"><small>0 = 播放整首</small></label><label class="field">牌间间隔 / 秒<input id="gap" type="number" min="0" max="300" value="3"></label></div>
+    <label class="field">起播位置 / 秒<input id="offset" type="number" min="0" max="86400" value="0"></label>
+    <label class="switch"><span>随机起播位置</span><input id="randomStart" type="checkbox"></label>
+    <div class="warmup-settings"><label class="field">热场音乐<small id="warmupFileName">默认：GRAND CARD TOUR -The Fifth Anniversary Anthem-</small></label><button id="warmupFileButton">选择 / 更换音频</button> <button id="warmupResetButton">恢复默认音乐</button><input id="warmupInput" type="file" accept="audio/*,.mp3,.flac,.wav,.ogg,.m4a,.aac,.opus" hidden></div>
+    <div class="section-head history-head"><h3>本轮记录</h3><button id="export" class="text-button">导出</button></div>
+    <ol id="history"><li class="empty">还没有读过的歌牌</li></ol>
+  </aside>
+</main>
+
+<script src="core.js"></script><script src="zip.js"></script><script src="app.js"></script>
+</body></html>
